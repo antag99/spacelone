@@ -62,3 +62,9 @@ build/
 
 ## OS Specific
 .DS_Store
+
+
+*.xcf
+skin.atlas
+skin*.png
+save/
