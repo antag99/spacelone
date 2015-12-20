@@ -19,12 +19,15 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.7.0'
+        retinazerVersion = '0.2.1'
+        kryoVersion = '3.0.3'
     }
 
     repositories {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+        maven { url "http://dl.bintray.com/antag99/maven"}
     }
 }
 
@@ -46,6 +49,8 @@ project(":core") {
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+        compile "com.github.antag99.retinazer:retinazer:$retinazerVersion"
+        compile "com.esotericsoftware:kryo:$kryoVersion"
     }
 }
 

@@ -1,0 +1,22 @@
+{
+  "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
+    "worldButton": {
+      "font": {
+        "file": "fonts/menu.fnt",
+        "scaledSize": 30
+      },
+      "fontColor": {
+        "r": 1,
+        "g": 0,
+        "b": 0,
+        "a": 1
+      },
+      "overFontColor": {
+        "r": 0,
+        "g": 0,
+        "b": 1,
+        "a": 1
+      }
+    }
+  }
+}
