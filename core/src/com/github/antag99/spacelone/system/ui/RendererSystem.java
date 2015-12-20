@@ -17,9 +17,11 @@ import com.github.antag99.spacelone.component.type.FloorTexture;
 import com.github.antag99.spacelone.component.ui.Renderer;
 import com.github.antag99.spacelone.component.ui.View;
 import com.github.antag99.spacelone.system.AssetSystem;
+import com.github.antag99.spacelone.system.IdSystem;
 
 public final class RendererSystem extends EntityProcessorSystem {
     private AssetSystem assetSystem;
+    private IdSystem idSystem;
     private @SkipWire TextureRegion groundTexture;
     private Mapper<Location> mLocation;
     private Mapper<Renderer> mRenderer;
@@ -65,9 +67,14 @@ public final class RendererSystem extends EntityProcessorSystem {
         if (startY > endY)
             startY = endY;
 
+        int ground = idSystem.getEntity("ground");
+
         for (int i = startX; i < endX; i++) {
             for (int j = startY; j < endY; j++) {
-                batch.draw(groundTexture, i, j, 1f, 1f);
+                int terrain = room.terrain.get(i, j);
+                if (terrain == ground)
+                    batch.draw(groundTexture, i, j, 1f, 1f);
+
                 int floor = room.floor.get(i, j);
                 FloorTexture floorTexture = mFloorTexture.get(floor);
                 if (floorTexture != null)

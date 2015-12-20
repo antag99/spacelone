@@ -21,6 +21,7 @@ allprojects {
         aiVersion = '1.7.0'
         retinazerVersion = '0.2.1'
         kryoVersion = '3.0.3'
+        joiseVersion = '1.0.1'
     }
 
     repositories {
@@ -51,6 +52,7 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.github.antag99.retinazer:retinazer:$retinazerVersion"
         compile "com.esotericsoftware:kryo:$kryoVersion"
+        compile "com.sudoplay.joise:joise:$joiseVersion"
     }
 }
 

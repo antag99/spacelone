@@ -35,6 +35,7 @@ public final class Room implements Component {
     public int world;
     public int width;
     public int height;
+    public IntMatrix terrain;
     public IntMatrix floor;
     public EntitySet entities = new EntitySet();
     public Vector2 spawnPosition = new Vector2();

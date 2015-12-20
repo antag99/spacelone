@@ -37,11 +37,15 @@ public final class RoomSystem extends EntitySystem {
                 Room room = new Room();
                 room.width = input.readInt();
                 room.height = input.readInt();
+                room.spawnPosition.set(input.readFloat(), input.readFloat());
+                room.terrain = new IntMatrix(room.width, room.height);
+                for (int i = 0, v[] = room.terrain.getValues(); i < v.length; i++) {
+                    v[i] = idSystem.getEntity(input.readString());
+                }
                 room.floor = new IntMatrix(room.width, room.height);
                 for (int i = 0, v[] = room.floor.getValues(); i < v.length; i++) {
                     v[i] = idSystem.getEntity(input.readString());
                 }
-                room.spawnPosition.set(input.readFloat(), input.readFloat());
                 return room;
             }
 
@@ -50,11 +54,14 @@ public final class RoomSystem extends EntitySystem {
                 // kryo.writeObject(output, object.uuid);
                 output.writeInt(object.width);
                 output.writeInt(object.height);
+                output.writeFloat(object.spawnPosition.x);
+                output.writeFloat(object.spawnPosition.y);
+                for (int i = 0, v[] = object.terrain.getValues(); i < v.length; i++) {
+                    output.writeString(mId.get(v[i]).id);
+                }
                 for (int i = 0, v[] = object.floor.getValues(); i < v.length; i++) {
                     output.writeString(mId.get(v[i]).id);
                 }
-                output.writeFloat(object.spawnPosition.x);
-                output.writeFloat(object.spawnPosition.y);
             }
         });
     }
@@ -81,6 +88,8 @@ public final class RoomSystem extends EntitySystem {
         room.width = width;
         room.height = height;
         room.world = worldEntity;
+        room.terrain = new IntMatrix(width, height);
+        Arrays.fill(room.terrain.getValues(), contentSystem.air);
         room.floor = new IntMatrix(width, height);
         Arrays.fill(room.floor.getValues(), contentSystem.air);
         room.uuid = UUID.randomUUID();
