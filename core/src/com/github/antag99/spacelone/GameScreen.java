@@ -1,6 +1,7 @@
 package com.github.antag99.spacelone;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.files.FileHandle;
@@ -28,10 +29,13 @@ import com.github.antag99.spacelone.system.object.ActorPositionSystem;
 import com.github.antag99.spacelone.system.object.ActorSizeSystem;
 import com.github.antag99.spacelone.system.object.CollisionSystem;
 import com.github.antag99.spacelone.system.object.ControlSystem;
+import com.github.antag99.spacelone.system.object.EdgeCollisionSystem;
 import com.github.antag99.spacelone.system.object.FadeSystem;
 import com.github.antag99.spacelone.system.object.HarvestedSystem;
 import com.github.antag99.spacelone.system.object.HarvestorSystem;
 import com.github.antag99.spacelone.system.object.MovementSystem;
+import com.github.antag99.spacelone.system.object.ObjectCollisionSystem;
+import com.github.antag99.spacelone.system.object.OverlapSystem;
 import com.github.antag99.spacelone.system.object.PlayerSystem;
 import com.github.antag99.spacelone.system.object.ResourceSystem;
 import com.github.antag99.spacelone.system.object.SpatialSystem;
@@ -98,7 +102,10 @@ public final class GameScreen extends ScreenAdapter {
                 .addSystem(new MovementSystem())
                 .addSystem(new VelocitySystem())
                 .addSystem(new SpatialSystem(PARTITION_WIDTH, PARTITION_HEIGHT))
+                .addSystem(new EdgeCollisionSystem())
+                .addSystem(new ObjectCollisionSystem(20f)) // TODO might need to adjust this
                 .addSystem(new CollisionSystem())
+                .addSystem(new OverlapSystem())
                 .addSystem(new ViewPositionSystem())
                 .addSystem(new GroundRendererSystem())
                 .addSystem(new FloorRendererSystem())
@@ -153,13 +160,17 @@ public final class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float deltaTime) {
+        if (Gdx.input.isKeyPressed(Keys.TAB)) {
+            deltaTime *= 50f;
+        }
+
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         engine.getSystem(DeltaSystem.class).setDeltaTime(deltaTime);
         engine.update();
 
-        stage.act();
+        stage.act(deltaTime);
         stage.draw();
     }
 

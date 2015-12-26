@@ -9,6 +9,7 @@ import com.github.antag99.retinazer.Mapper;
 import com.github.antag99.retinazer.SkipWire;
 import com.github.antag99.spacelone.component.Id;
 import com.github.antag99.spacelone.component.Name;
+import com.github.antag99.spacelone.component.Solid;
 import com.github.antag99.spacelone.component.object.Position;
 import com.github.antag99.spacelone.component.object.RoomObject;
 import com.github.antag99.spacelone.component.object.Size;
@@ -45,6 +46,7 @@ public final class ContentSystem extends EntitySystem {
     private Mapper<Resource> mResource;
     private Mapper<Position> mPosition;
     private Mapper<Tree> mTree;
+    private Mapper<Solid> mSolid;
 
     private Mapper<RoomObject> mRoomObject;
 
@@ -78,6 +80,7 @@ public final class ContentSystem extends EntitySystem {
         registerPropertyType(Resource.class);
         registerPropertyType(ObjectTextureRef.class);
         registerPropertyType(Tree.class);
+        registerPropertyType(Solid.class);
     }
 
     public @SkipWire int air;
@@ -142,6 +145,7 @@ public final class ContentSystem extends EntitySystem {
         mDrop.create(entity).type("log").amount(2, 5);
         mResource.create(entity).amount = 1;
         mTree.create(entity);
+        mSolid.create(entity);
     }
 
     private void initializeTerrainTypes() {

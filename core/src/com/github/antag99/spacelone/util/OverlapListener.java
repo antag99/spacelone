@@ -21,12 +21,12 @@
  ******************************************************************************/
 package com.github.antag99.spacelone.util;
 
-import com.github.antag99.spacelone.system.object.CollisionSystem;
+import com.github.antag99.spacelone.system.object.OverlapSystem;
 
 /**
- * Listener for {@link CollisionSystem}.
+ * Listener for {@link OverlapSystem}.
  */
-public interface CollisionListener {
+public interface OverlapListener {
 
     /**
      * Invoked when two entities collide. Note that the arguments will be in

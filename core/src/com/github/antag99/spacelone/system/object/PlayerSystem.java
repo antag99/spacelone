@@ -12,6 +12,7 @@ import com.github.antag99.retinazer.Mapper;
 import com.github.antag99.spacelone.component.Room;
 import com.github.antag99.spacelone.component.Solid;
 import com.github.antag99.spacelone.component.World;
+import com.github.antag99.spacelone.component.object.Collision;
 import com.github.antag99.spacelone.component.object.Control;
 import com.github.antag99.spacelone.component.object.Harvestor;
 import com.github.antag99.spacelone.component.object.Location;
@@ -42,6 +43,7 @@ public final class PlayerSystem extends EntitySystem {
     private Mapper<Control> mControl;
     private Mapper<Movement> mMovement;
     private Mapper<Harvestor> mHarvestor;
+    private Mapper<Collision> mCollision;
 
     @Override
     protected void initialize() {
@@ -72,6 +74,8 @@ public final class PlayerSystem extends EntitySystem {
         mControl.create(player);
         mMovement.create(player).speed = 8f;
         mHarvestor.create(player);
+        mCollision.create(player);
+
         return player;
     }
 
