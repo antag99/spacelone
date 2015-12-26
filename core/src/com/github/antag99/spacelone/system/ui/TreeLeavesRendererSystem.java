@@ -39,7 +39,8 @@ public final class TreeLeavesRendererSystem extends BaseObjectRendererSystem imp
 
     @Override
     public void dispose() {
-        leavesBuffer.dispose();
+        if (leavesBuffer != null)
+            leavesBuffer.dispose();
     }
 
     @Override
