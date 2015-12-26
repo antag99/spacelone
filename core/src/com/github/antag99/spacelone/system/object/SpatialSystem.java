@@ -66,6 +66,14 @@ public final class SpatialSystem extends EntityProcessorSystem {
         this.partitionHeight = partitionHeight;
     }
 
+    public int getPartitionWidth() {
+        return partitionWidth;
+    }
+
+    public int getPartitionHeight() {
+        return partitionHeight;
+    }
+
     @Override
     protected void initialize() {
         engine.getFamily(getFamily()).addListener(new EntityListener() {

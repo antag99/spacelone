@@ -3,6 +3,8 @@ package com.github.antag99.spacelone.system;
 import java.util.Arrays;
 import java.util.UUID;
 
+import com.badlogic.gdx.math.GridPoint2;
+import com.badlogic.gdx.math.MathUtils;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
@@ -10,23 +12,30 @@ import com.esotericsoftware.kryo.io.Output;
 import com.github.antag99.retinazer.EntitySet;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.Mapper;
+import com.github.antag99.retinazer.SkipWire;
 import com.github.antag99.spacelone.component.Id;
 import com.github.antag99.spacelone.component.Room;
 import com.github.antag99.spacelone.component.World;
 import com.github.antag99.spacelone.component.object.Location;
+import com.github.antag99.spacelone.component.object.Position;
+import com.github.antag99.spacelone.component.object.Size;
+import com.github.antag99.spacelone.system.object.SpatialSystem;
 import com.github.antag99.spacelone.system.type.ContentSystem;
 import com.github.antag99.spacelone.util.IntMatrix;
 import com.github.antag99.spacelone.util.UUIDUtils;
 
 public final class RoomSystem extends EntitySystem {
     private Kryo kryo;
+    private IdSystem idSystem;
+    private ContentSystem contentSystem;
+    private WorldSystem worldSystem;
+    private SpatialSystem spatialSystem;
     private Mapper<World> mWorld;
     private Mapper<Room> mRoom;
     private Mapper<Location> mLocation;
     private Mapper<Id> mId;
-    private WorldSystem worldSystem;
-    private ContentSystem contentSystem;
-    private IdSystem idSystem;
+    private Mapper<Position> mPosition;
+    private Mapper<Size> mSize;
 
     @Override
     protected void initialize() {
@@ -136,5 +145,44 @@ public final class RoomSystem extends EntitySystem {
             }
         }
         engine.destroyEntity(roomEntity);
+    }
+
+    private @SkipWire EntitySet tmpEntities = new EntitySet();
+    private @SkipWire GridPoint2 key = new GridPoint2();
+
+    public EntitySet getEntities(int roomEntity, float x, float y, float width, float height) {
+        int partitionWidth = spatialSystem.getPartitionWidth();
+        int partitionHeight = spatialSystem.getPartitionHeight();
+
+        Room room = mRoom.get(roomEntity);
+        int minX = MathUtils.floor(x / partitionWidth);
+        int maxX = MathUtils.ceil((x + width) / partitionWidth);
+        int minY = MathUtils.floor(y / partitionHeight);
+        int maxY = MathUtils.ceil((y + height) / partitionHeight);
+
+        tmpEntities.edit().clear();
+        EntitySet set = tmpEntities;
+
+        for (int i = minX; i < maxX; i++) {
+            for (int j = minY; j < maxY; j++) {
+                EntitySet partition = room.partitions.get(key.set(i, j));
+                if (partition == null) {
+                    continue;
+                }
+
+                for (int k = 0, n = partition.size(), items[] = partition.getIndices().items; k < n; k++) {
+                    int entity = items[k];
+                    Position position = mPosition.get(entity);
+                    Size size = mSize.get(entity);
+
+                    if (position.x + size.width > x && position.y + size.height > y &&
+                            x + width > position.x && y + height > position.y) {
+                        set.edit().addEntity(entity);
+                    }
+                }
+            }
+        }
+
+        return set;
     }
 }

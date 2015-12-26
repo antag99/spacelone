@@ -7,4 +7,5 @@ public final class Control implements Component {
     public boolean moveRight, wasMoveRight;
     public boolean moveUp, wasMoveUp;
     public boolean moveDown, wasMoveDown;
+    public boolean harvest, wasHarvest;
 }

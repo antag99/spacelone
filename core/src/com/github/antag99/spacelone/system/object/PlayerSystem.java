@@ -13,6 +13,7 @@ import com.github.antag99.spacelone.component.Room;
 import com.github.antag99.spacelone.component.Solid;
 import com.github.antag99.spacelone.component.World;
 import com.github.antag99.spacelone.component.object.Control;
+import com.github.antag99.spacelone.component.object.Harvestor;
 import com.github.antag99.spacelone.component.object.Location;
 import com.github.antag99.spacelone.component.object.Movement;
 import com.github.antag99.spacelone.component.object.Player;
@@ -24,8 +25,8 @@ import com.github.antag99.spacelone.system.WorldSystem;
 import com.github.antag99.spacelone.util.UUIDUtils;
 
 public final class PlayerSystem extends EntitySystem {
-    public static final float PLAYER_WIDTH = 2f;
-    public static final float PLAYER_HEIGHT = 2f;
+    public static final float PLAYER_WIDTH = 0.8f;
+    public static final float PLAYER_HEIGHT = 0.8f;
 
     private Kryo kryo;
     private RoomSystem roomSystem;
@@ -40,6 +41,7 @@ public final class PlayerSystem extends EntitySystem {
     private Mapper<Location> mLocation;
     private Mapper<Control> mControl;
     private Mapper<Movement> mMovement;
+    private Mapper<Harvestor> mHarvestor;
 
     @Override
     protected void initialize() {
@@ -59,7 +61,6 @@ public final class PlayerSystem extends EntitySystem {
 
     public int createPlayer(int roomEntity) {
         int player = roomSystem.createEntity(roomEntity);
-        System.out.println("create player " + player);
         Room room = mRoom.get(roomEntity);
         World world = mWorld.get(room.world);
         world.players.edit().addEntity(player);
@@ -70,6 +71,7 @@ public final class PlayerSystem extends EntitySystem {
         mSolid.create(player);
         mControl.create(player);
         mMovement.create(player).speed = 8f;
+        mHarvestor.create(player);
         return player;
     }
 

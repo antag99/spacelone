@@ -19,7 +19,7 @@ allprojects {
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.7.0'
-        retinazerVersion = '0.2.1'
+        retinazerVersion = 'c92b2bd2ef'
         kryoVersion = '3.0.3'
         joiseVersion = '1.0.1'
     }
@@ -28,7 +28,9 @@ allprojects {
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-        maven { url "http://dl.bintray.com/antag99/maven"}
+        maven { url "https://dl.bintray.com/antag99/maven" }
+        maven { url "https://jitpack.io/" }
+        mavenLocal()
     }
 }
 

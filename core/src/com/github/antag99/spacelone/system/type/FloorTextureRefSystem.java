@@ -17,5 +17,7 @@ public final class FloorTextureRefSystem extends BaseRefSystem<FloorTexture, Flo
     @Override
     protected void initialize(FloorTexture component, FloorTextureRef ref) {
         component.texture = atlas.findRegion(ref.name);
+        if (component.texture == null)
+            throw new IllegalArgumentException("no such texture: " + ref.name);
     }
 }

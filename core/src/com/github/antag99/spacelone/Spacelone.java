@@ -33,6 +33,16 @@ public final class Spacelone extends Game {
         setScreen(menuScreen);
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+
+        batch.dispose();
+        gameScreen.dispose();
+        menuScreen.dispose();
+        skin.dispose();
+    }
+
     public static final String TAG = "blockabout";
 
     public static final void trace(String format, Object... args) {

@@ -21,9 +21,11 @@ public final class ControlSystem extends EntityProcessorSystem {
         control.wasMoveRight = control.moveRight;
         control.wasMoveUp = control.moveUp;
         control.wasMoveDown = control.moveDown;
+        control.wasHarvest = control.harvest;
         control.moveLeft = Gdx.input.isKeyPressed(Keys.A);
         control.moveRight = Gdx.input.isKeyPressed(Keys.D);
         control.moveUp = Gdx.input.isKeyPressed(Keys.W);
         control.moveDown = Gdx.input.isKeyPressed(Keys.S);
+        control.harvest = Gdx.input.isKeyPressed(Keys.SPACE);
     }
 }
