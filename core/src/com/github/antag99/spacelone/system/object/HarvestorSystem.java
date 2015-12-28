@@ -11,7 +11,6 @@ import com.github.antag99.spacelone.component.object.Harvested;
 import com.github.antag99.spacelone.component.object.Harvestor;
 import com.github.antag99.spacelone.component.object.Location;
 import com.github.antag99.spacelone.component.object.Position;
-import com.github.antag99.spacelone.component.object.RoomObject;
 import com.github.antag99.spacelone.component.object.Size;
 import com.github.antag99.spacelone.component.type.Harvestable;
 import com.github.antag99.spacelone.system.DeltaSystem;
@@ -26,7 +25,6 @@ public final class HarvestorSystem extends EntityProcessorSystem {
     private Mapper<Harvestor> mHarvestor;
     private Mapper<Control> mControl;
 
-    private Mapper<RoomObject> mRoomObject;
     private Mapper<Harvestable> mHarvestable;
     private Mapper<Harvested> mHarvested;
 
@@ -66,19 +64,16 @@ public final class HarvestorSystem extends EntityProcessorSystem {
                 float objectCenterY = objectPosition.y + objectSize.height * 0.5f;
                 float distance = Vector2.dst2(centerX, centerY, objectCenterX, objectCenterY);
 
-                RoomObject roomObject = mRoomObject.get(object);
-                if (roomObject != null) {
-                    Harvestable harvestable = mHarvestable.get(roomObject.type);
-                    if (harvestable != null) {
-                        if (distance <= closestDistance) {
-                            // If this object is closer than the earlier then remove them
-                            if (distance < closestDistance)
-                                for (int ii = 0, nn = i; ii < nn; ii++)
-                                    objects.edit().removeEntity(items[ii]);
+                Harvestable harvestable = mHarvestable.get(object);
+                if (harvestable != null && !harvestable.isBeingHarvested) {
+                    if (distance <= closestDistance) {
+                        // If this object is closer than the earlier then remove them
+                        if (distance < closestDistance)
+                            for (int ii = 0, nn = i; ii < nn; ii++)
+                                objects.edit().removeEntity(items[ii]);
 
-                            closestDistance = distance;
-                            continue;
-                        }
+                        closestDistance = distance;
+                        continue;
                     }
                 }
 
@@ -89,6 +84,7 @@ public final class HarvestorSystem extends EntityProcessorSystem {
                 harvestor.active = true;
                 harvestor.counter = 0f;
                 harvestor.target = objects.getIndices().random();
+                mHarvestable.get(harvestor.target).isBeingHarvested = true;
             }
         }
 
@@ -97,7 +93,8 @@ public final class HarvestorSystem extends EntityProcessorSystem {
             float time = 0.5f; // XXX temporary (shh) hack
             if (harvestor.counter >= time) {
                 harvestor.active = false;
-                mHarvested.create(harvestor.target);
+                mHarvestable.get(harvestor.target).isBeingHarvested = false;
+                mHarvested.create(harvestor.target).harvestor = entity;
             }
         }
     }

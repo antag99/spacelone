@@ -22,10 +22,12 @@
 package com.github.antag99.spacelone.component.object;
 
 import com.github.antag99.retinazer.Component;
+import com.github.antag99.spacelone.util.SkipSerialization;
 
 /**
  * Tracks the location of an entity; this is the partition and room it resides in.
  */
+@SkipSerialization
 public final class Location implements Component {
     public int room;
 

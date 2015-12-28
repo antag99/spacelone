@@ -3,7 +3,9 @@ package com.github.antag99.spacelone.component.object;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.github.antag99.retinazer.Component;
+import com.github.antag99.spacelone.util.SkipSerialization;
 
+@SkipSerialization
 public final class Fade implements Component {
     public Color color = new Color();
     public float duration = 0f;

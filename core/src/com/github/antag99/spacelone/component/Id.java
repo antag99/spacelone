@@ -22,10 +22,12 @@
 package com.github.antag99.spacelone.component;
 
 import com.github.antag99.retinazer.Component;
+import com.github.antag99.spacelone.util.SkipProperty;
 
 /**
  * Associates an entity with a ID. Only one entity with an ID can exist at a time.
  */
+@SkipProperty
 public final class Id implements Component {
 
     /**

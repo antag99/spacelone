@@ -101,7 +101,6 @@ public final class TreeLeavesRendererSystem extends BaseObjectRendererSystem imp
     @Override
     protected void renderObject(Batch batch, int viewEntity, int objectEntity) {
         Position position = mPosition.get(objectEntity);
-        Size size = mSize.get(objectEntity);
         batch.setColor(Color.FOREST);
         batch.draw(leavesTexture, position.x - 2f, position.y - 2f, 0f, 0f,
                 5f, 5f, 1f, 1f, 0f);

@@ -3,8 +3,6 @@ package com.github.antag99.spacelone.system.object;
 import java.util.UUID;
 
 import com.badlogic.gdx.files.FileHandle;
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
 import com.github.antag99.retinazer.EntitySystem;
@@ -15,6 +13,8 @@ import com.github.antag99.spacelone.component.World;
 import com.github.antag99.spacelone.component.object.Collision;
 import com.github.antag99.spacelone.component.object.Control;
 import com.github.antag99.spacelone.component.object.Harvestor;
+import com.github.antag99.spacelone.component.object.Inventory;
+import com.github.antag99.spacelone.component.object.InventoryItem;
 import com.github.antag99.spacelone.component.object.Location;
 import com.github.antag99.spacelone.component.object.Movement;
 import com.github.antag99.spacelone.component.object.Player;
@@ -29,7 +29,6 @@ public final class PlayerSystem extends EntitySystem {
     public static final float PLAYER_WIDTH = 0.8f;
     public static final float PLAYER_HEIGHT = 0.8f;
 
-    private Kryo kryo;
     private RoomSystem roomSystem;
     private WorldSystem worldSystem;
     private Mapper<Room> mRoom;
@@ -44,22 +43,8 @@ public final class PlayerSystem extends EntitySystem {
     private Mapper<Movement> mMovement;
     private Mapper<Harvestor> mHarvestor;
     private Mapper<Collision> mCollision;
-
-    @Override
-    protected void initialize() {
-        kryo.register(UUID.class, new Serializer<UUID>() {
-            @Override
-            public UUID read(Kryo kryo, Input input, Class<UUID> type) {
-                return new UUID(input.readLong(), input.readLong());
-            }
-
-            @Override
-            public void write(Kryo kryo, Output output, UUID object) {
-                output.writeLong(object.getMostSignificantBits());
-                output.writeLong(object.getLeastSignificantBits());
-            }
-        });
-    }
+    private Mapper<Inventory> mInventory;
+    private Mapper<InventoryItem> mInventoryItem;
 
     public int createPlayer(int roomEntity) {
         int player = roomSystem.createEntity(roomEntity);
@@ -71,39 +56,52 @@ public final class PlayerSystem extends EntitySystem {
         mSize.create(player).set(PLAYER_WIDTH, PLAYER_HEIGHT);
         mVelocity.create(player);
         mSolid.create(player);
-        mControl.create(player);
         mMovement.create(player).speed = 8f;
         mHarvestor.create(player);
         mCollision.create(player);
-
+        mControl.create(player);
+        mInventory.create(player);
         return player;
     }
 
     public int loadPlayer(int worldEntity, UUID playerUuid) {
         World world = mWorld.get(worldEntity);
         FileHandle playerFile = world.directory.child("players/" + UUIDUtils.toHexString(playerUuid));
-
         if (!playerFile.exists())
             throw new IllegalArgumentException("player does not exist");
-
         Input input = new Input(playerFile.read());
         UUID roomUuid = world.kryo.readObject(input, UUID.class);
-        int player = worldSystem.loadEntity(worldEntity, input);
-        System.out.println("load player " + player);
-        world.players.edit().addEntity(player);
-        mLocation.create(player).room = worldSystem.getOrLoadRoom(worldEntity, roomUuid);
+        int roomEntity = worldSystem.getOrLoadRoom(worldEntity, roomUuid);
+        int playerEntity = roomSystem.createEntity(roomEntity);
+        worldSystem.loadEntity(worldEntity, playerEntity, input);
+        mPlayer.create(playerEntity).uuid = playerUuid;
+        mControl.create(playerEntity);
+        world.players.edit().addEntity(playerEntity);
+        mInventory.create(playerEntity);
+        int itemCount = input.readInt(true);
+        for (int i = 0; i < itemCount; i++) {
+            int entity = engine.createEntity();
+            mInventoryItem.create(entity).inventory = playerEntity;
+            worldSystem.loadEntity(worldEntity, entity, input);
+        }
         input.close();
-        return player;
+        return playerEntity;
     }
 
     public void savePlayer(int playerEntity) {
         Player player = mPlayer.get(playerEntity);
         Room room = mRoom.get(mLocation.get(playerEntity).room);
-        World world = mWorld.get(room.world);
+        int worldEntity = room.world;
+        World world = mWorld.get(worldEntity);
         FileHandle playerFile = world.directory.child("players/" + UUIDUtils.toHexString(player.uuid));
         Output output = new Output(playerFile.write(false));
         world.kryo.writeObject(output, room.uuid);
-        worldSystem.saveEntity(playerEntity, output);
+        worldSystem.saveEntity(worldEntity, playerEntity, output);
+        Inventory inventory = mInventory.get(playerEntity);
+        output.writeInt(inventory.items.size(), true);
+        for (int i = 0, n = inventory.items.size(), v[] = inventory.items.getIndices().items; i < n; i++) {
+            worldSystem.saveEntity(worldEntity, v[i], output);
+        }
         output.close();
     }
 

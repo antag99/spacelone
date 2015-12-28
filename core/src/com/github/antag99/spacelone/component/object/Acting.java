@@ -2,7 +2,9 @@ package com.github.antag99.spacelone.component.object;
 
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.github.antag99.retinazer.Component;
+import com.github.antag99.spacelone.util.SkipSerialization;
 
+@SkipSerialization
 public final class Acting implements Component {
     public Actor actor;
 

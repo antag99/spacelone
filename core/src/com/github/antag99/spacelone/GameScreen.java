@@ -1,5 +1,7 @@
 package com.github.antag99.spacelone;
 
+import java.util.UUID;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.InputMultiplexer;
@@ -12,6 +14,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.Serializer;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 import com.github.antag99.retinazer.Engine;
 import com.github.antag99.retinazer.EngineConfig;
 import com.github.antag99.retinazer.EntitySystem;
@@ -29,10 +34,13 @@ import com.github.antag99.spacelone.system.object.ActorPositionSystem;
 import com.github.antag99.spacelone.system.object.ActorSizeSystem;
 import com.github.antag99.spacelone.system.object.CollisionSystem;
 import com.github.antag99.spacelone.system.object.ControlSystem;
+import com.github.antag99.spacelone.system.object.DropSystem;
 import com.github.antag99.spacelone.system.object.EdgeCollisionSystem;
 import com.github.antag99.spacelone.system.object.FadeSystem;
 import com.github.antag99.spacelone.system.object.HarvestedSystem;
 import com.github.antag99.spacelone.system.object.HarvestorSystem;
+import com.github.antag99.spacelone.system.object.InventorySystem;
+import com.github.antag99.spacelone.system.object.ItemPickupSystem;
 import com.github.antag99.spacelone.system.object.MovementSystem;
 import com.github.antag99.spacelone.system.object.ObjectCollisionSystem;
 import com.github.antag99.spacelone.system.object.OverlapSystem;
@@ -46,6 +54,7 @@ import com.github.antag99.spacelone.system.type.ItemTextureRefSystem;
 import com.github.antag99.spacelone.system.type.ObjectTextureRefSystem;
 import com.github.antag99.spacelone.system.ui.FloorRendererSystem;
 import com.github.antag99.spacelone.system.ui.GroundRendererSystem;
+import com.github.antag99.spacelone.system.ui.ItemRendererSystem;
 import com.github.antag99.spacelone.system.ui.PlayerRendererSystem;
 import com.github.antag99.spacelone.system.ui.TreeLeavesRendererSystem;
 import com.github.antag99.spacelone.system.ui.TreeTrunkRendererSystem;
@@ -80,6 +89,18 @@ public final class GameScreen extends ScreenAdapter {
         stage = new Stage(viewport, game.batch);
 
         kryo = new Kryo();
+        kryo.register(UUID.class, new Serializer<UUID>() {
+            @Override
+            public UUID read(Kryo kryo, Input input, Class<UUID> type) {
+                return new UUID(input.readLong(), input.readLong());
+            }
+
+            @Override
+            public void write(Kryo kryo, Output output, UUID object) {
+                output.writeLong(object.getMostSignificantBits());
+                output.writeLong(object.getLeastSignificantBits());
+            }
+        });
         engine = new Engine(new EngineConfig()
                 .addWireResolver(new DependencyResolver(new DependencyConfig()
                         .addDependency(kryo)))
@@ -98,6 +119,9 @@ public final class GameScreen extends ScreenAdapter {
                 .addSystem(new HarvestorSystem())
                 .addSystem(new HarvestedSystem())
                 .addSystem(new ResourceSystem())
+                .addSystem(new ItemPickupSystem())
+                .addSystem(new InventorySystem())
+                .addSystem(new DropSystem())
                 .addSystem(new ControlSystem())
                 .addSystem(new MovementSystem())
                 .addSystem(new VelocitySystem())
@@ -110,6 +134,7 @@ public final class GameScreen extends ScreenAdapter {
                 .addSystem(new GroundRendererSystem())
                 .addSystem(new FloorRendererSystem())
                 .addSystem(new TreeTrunkRendererSystem())
+                .addSystem(new ItemRendererSystem())
                 .addSystem(new PlayerRendererSystem())
                 .addSystem(new TreeLeavesRendererSystem())
                 .addSystem(new ClientSystem(this))
@@ -122,7 +147,6 @@ public final class GameScreen extends ScreenAdapter {
 
         inputMultiplexer = new InputMultiplexer();
         inputMultiplexer.addProcessor(stage);
-        // inputMultiplexer.addProcessor(engine.getSystem(KeyboardSystem.class));
     }
 
     @Override
@@ -134,6 +158,7 @@ public final class GameScreen extends ScreenAdapter {
     @Override
     public void hide() {
         engine.getSystem(ClientSystem.class).stopGame(world);
+        engine.update();
         engine.reset();
     }
 

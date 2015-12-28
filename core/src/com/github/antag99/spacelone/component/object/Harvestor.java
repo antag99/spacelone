@@ -4,9 +4,9 @@ import com.github.antag99.retinazer.Component;
 
 public final class Harvestor implements Component {
     /** whether the entity is currently harvesting */
-    public boolean active;
+    public transient boolean active = false;
     /** entity that is currently being harvested */
-    public int target;
+    public transient int target = -1;
     /** counter for haversting the current entity */
-    public float counter;
+    public transient float counter = 0f;
 }

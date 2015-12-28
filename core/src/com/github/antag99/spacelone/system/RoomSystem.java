@@ -16,9 +16,12 @@ import com.github.antag99.retinazer.SkipWire;
 import com.github.antag99.spacelone.component.Id;
 import com.github.antag99.spacelone.component.Room;
 import com.github.antag99.spacelone.component.World;
+import com.github.antag99.spacelone.component.object.InventoryItem;
 import com.github.antag99.spacelone.component.object.Location;
+import com.github.antag99.spacelone.component.object.Player;
 import com.github.antag99.spacelone.component.object.Position;
 import com.github.antag99.spacelone.component.object.Size;
+import com.github.antag99.spacelone.component.type.Harvestable;
 import com.github.antag99.spacelone.system.object.SpatialSystem;
 import com.github.antag99.spacelone.system.type.ContentSystem;
 import com.github.antag99.spacelone.util.IntMatrix;
@@ -36,11 +39,14 @@ public final class RoomSystem extends EntitySystem {
     private Mapper<Id> mId;
     private Mapper<Position> mPosition;
     private Mapper<Size> mSize;
+    private Mapper<InventoryItem> mInventoryItem;
+    private Mapper<Harvestable> mHarvestable;
+
+    private Mapper<Player> mPlayer;
 
     @Override
     protected void initialize() {
-        // Note that only room data is serialized here - no entities
-        kryo.register(Room.class, new Serializer<Room>() {
+        kryo.getRegistration(Room.class).setSerializer(new Serializer<Room>() {
             @Override
             public Room read(Kryo kryo, Input input, Class<Room> type) {
                 Room room = new Room();
@@ -114,23 +120,34 @@ public final class RoomSystem extends EntitySystem {
         Room room = kryo.readObject(input, Room.class);
         room.world = worldEntity;
         room.uuid = roomUuid;
-        for (int i = 0, n = input.readInt(); i < n; i++) {
-            worldSystem.loadEntity(worldEntity, input);
-        }
         mRoom.add(roomEntity, room);
+        for (int i = 0, n = input.readInt(); i < n; i++) {
+            int entity = createEntity(roomEntity);
+            worldSystem.loadEntity(worldEntity, entity, input);
+        }
         input.close();
         return roomEntity;
     }
 
     public void saveRoom(int roomEntity) {
         Room room = mRoom.get(roomEntity);
-        World world = mWorld.get(room.world);
+        int worldEntity = room.world;
+        World world = mWorld.get(worldEntity);
         Output output = new Output(world.directory.child("rooms/" +
                 UUIDUtils.toHexString(room.uuid)).write(false));
         world.kryo.writeObject(output, room);
-        output.writeInt(room.entities.size());
+        int count = 0;
         for (int i = 0, n = room.entities.size(), items[] = room.entities.getIndices().items; i < n; i++) {
-            worldSystem.saveEntity(items[i], output);
+            if (!mPlayer.has(items[i])) {
+                count++;
+            }
+        }
+        output.writeInt(count);
+        for (int i = 0, n = room.entities.size(), items[] = room.entities.getIndices().items; i < n; i++) {
+            int entity = items[i];
+            if (!mPlayer.has(entity)) {
+                worldSystem.saveEntity(worldEntity, entity, output);
+            }
         }
         output.close();
     }
@@ -184,5 +201,24 @@ public final class RoomSystem extends EntitySystem {
         }
 
         return set;
+    }
+
+    public void dropItem(int roomEntity, int itemEntity, float x, float y) {
+        if (mLocation.has(itemEntity))
+            throw new IllegalArgumentException("entity already exists in a room: " + itemEntity);
+        if (mInventoryItem.has(itemEntity))
+            mInventoryItem.remove(itemEntity);
+        mLocation.create(itemEntity).room = roomEntity;
+        mPosition.create(itemEntity).xy(x, y);
+        mHarvestable.create(itemEntity);
+    }
+
+    public void pickupItem(int itemEntity, int inventoryEntity) {
+        if (!mLocation.has(itemEntity))
+            throw new IllegalArgumentException("entity does not exist in a room: " + itemEntity);
+        mLocation.remove(itemEntity);
+        mPosition.remove(itemEntity);
+        mInventoryItem.create(itemEntity).inventory = inventoryEntity;
+        mHarvestable.remove(itemEntity);
     }
 }

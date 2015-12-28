@@ -1,7 +1,10 @@
 package com.github.antag99.spacelone.system;
 
 import java.io.IOException;
+import java.util.Set;
 import java.util.UUID;
+
+import org.reflections.Reflections;
 
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
@@ -15,19 +18,11 @@ import com.github.antag99.retinazer.Component;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.Mapper;
 import com.github.antag99.retinazer.SkipWire;
-import com.github.antag99.spacelone.component.Name;
 import com.github.antag99.spacelone.component.Room;
-import com.github.antag99.spacelone.component.Solid;
 import com.github.antag99.spacelone.component.World;
-import com.github.antag99.spacelone.component.object.Colored;
-import com.github.antag99.spacelone.component.object.Control;
-import com.github.antag99.spacelone.component.object.Location;
-import com.github.antag99.spacelone.component.object.Movement;
 import com.github.antag99.spacelone.component.object.Player;
-import com.github.antag99.spacelone.component.object.Position;
-import com.github.antag99.spacelone.component.object.Size;
-import com.github.antag99.spacelone.component.object.Velocity;
 import com.github.antag99.spacelone.system.object.PlayerSystem;
+import com.github.antag99.spacelone.util.SkipSerialization;
 import com.github.antag99.spacelone.util.UUIDUtils;
 
 public final class WorldSystem extends EntitySystem {
@@ -36,12 +31,10 @@ public final class WorldSystem extends EntitySystem {
     private PlayerSystem playerSystem;
     private Mapper<World> mWorld;
     private Mapper<Room> mRoom;
-    private Mapper<Location> mLocation;
     private Mapper<Player> mPlayer;
 
     private Kryo kryo;
-    private @SkipWire Array<Component> tmpComponents = new Array<Component>(Component.class);
-    private @SkipWire Array<Mapper<?>> serializableComponents = new Array<Mapper<?>>(Mapper.class);
+    private @SkipWire Mapper<?>[] serializeMappers;
 
     public int createWorld(FileHandle directory) {
         int worldEntity = engine.createEntity();
@@ -124,46 +117,37 @@ public final class WorldSystem extends EntitySystem {
 
     @Override
     protected void initialize() {
-        registerComponentType(Position.class);
-        registerComponentType(Velocity.class);
-        registerComponentType(Size.class);
-        registerComponentType(Name.class);
-        registerComponentType(Player.class);
-        registerComponentType(Solid.class);
-        registerComponentType(Colored.class);
-        registerComponentType(Movement.class);
-        registerComponentType(Control.class);
+        Reflections reflections = new Reflections("com.github.antag99.spacelone");
+        Set<Class<? extends Component>> types = reflections.getSubTypesOf(Component.class);
+        Array<Class<? extends Component>> serializableTypes = new Array<>();
+        for (Class<? extends Component> type : types)
+            if (type.getAnnotation(SkipSerialization.class) == null)
+                serializableTypes.add(type);
+        serializeMappers = new Mapper<?>[serializableTypes.size];
+        for (int i = 0, n = serializableTypes.size; i < n; i++)
+            serializeMappers[i] = engine.getMapper(serializableTypes.get(i));
     }
 
-    public void registerComponentType(Class<? extends Component> componentType) {
-        serializableComponents.add(engine.getMapper(componentType));
-    }
-
-    public void saveEntity(int entity, Output output) {
-        int roomEntity = mLocation.get(entity).room;
-        World world = mWorld.get(mRoom.get(roomEntity).world);
-        Array<Component> components = tmpComponents;
-        Mapper<?>[] mappers = serializableComponents.items;
-        for (int i = 0, n = serializableComponents.size; i < n; i++) {
-            Component component = mappers[i].get(entity);
+    public void saveEntity(int worldEntity, int entity, Output output) {
+        World world = mWorld.get(worldEntity);
+        int count = 0;
+        for (Mapper<?> mapper : serializeMappers)
+            if (mapper.has(entity))
+                count++;
+        output.writeInt(count, true);
+        for (Mapper<?> mapper : serializeMappers) {
+            Component component = mapper.get(entity);
             if (component != null)
-                components.add(component);
+                world.kryo.writeClassAndObject(output, component);
         }
-        output.writeInt(components.size, true);
-        for (Component component : components) {
-            world.kryo.writeClassAndObject(output, component);
-        }
-        components.clear();
     }
 
     @SuppressWarnings("unchecked")
-    public int loadEntity(int worldEntity, Input input) {
+    public void loadEntity(int worldEntity, int entity, Input input) {
         World world = mWorld.get(worldEntity);
-        int entity = engine.createEntity();
         for (int i = 0, n = input.readInt(true); i < n; i++) {
             Component component = (Component) world.kryo.readClassAndObject(input);
             ((Mapper<Component>) engine.getMapper(component.getClass())).add(entity, component);
         }
-        return entity;
     }
 }

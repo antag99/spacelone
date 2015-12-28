@@ -3,8 +3,9 @@ package com.github.antag99.spacelone.component.object;
 import com.github.antag99.retinazer.Component;
 
 /**
- * An object in a room... java stole the {@code Object} name.
+ * An item instance, either inside of an inventory or on the ground.
  */
-public final class RoomObject implements Component {
+
+public final class Item implements Component {
     public int prefab;
 }
