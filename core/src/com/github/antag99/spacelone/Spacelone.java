@@ -18,6 +18,7 @@ public final class Spacelone extends Game {
     public Skin skin;
     public GameScreen gameScreen;
     public MenuScreen menuScreen;
+    public PauseScreen pauseScreen;
     public FileHandle saveDirectory;
 
     @Override
@@ -29,6 +30,7 @@ public final class Spacelone extends Game {
 
         gameScreen = new GameScreen(this);
         menuScreen = new MenuScreen(this);
+        pauseScreen = new PauseScreen(this);
 
         setScreen(menuScreen);
     }

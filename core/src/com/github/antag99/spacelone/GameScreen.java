@@ -159,7 +159,7 @@ public final class GameScreen extends ScreenAdapter {
     public void hide() {
         engine.getSystem(ClientSystem.class).stopGame(world);
         engine.update();
-        engine.reset();
+        // engine.reset();
     }
 
     @Override
@@ -197,6 +197,10 @@ public final class GameScreen extends ScreenAdapter {
 
         stage.act(deltaTime);
         stage.draw();
+
+        if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
+            game.setScreen(game.pauseScreen);
+        }
     }
 
     @Override

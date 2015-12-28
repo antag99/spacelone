@@ -1,6 +1,6 @@
 {
   "com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle": {
-    "worldButton": {
+    "menu": {
       "font": {
         "file": "fonts/menu.fnt",
         "scaledSize": 30
@@ -18,5 +18,80 @@
         "a": 1
       }
     }
-  }
+  },
+
+  "com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable": {
+    "saveListBackground": {
+      "name": "images/white",
+      "color": {
+        "r": 0, "g": 0, "b": 0, "a": 0.8
+      }
+    },
+
+    "saveListSelection": {
+      "name": "images/white",
+      "color": {
+        "r": 1, "g": 1, "b": 0.5, "a": 0.8
+      }
+    },
+
+    "saveScrollKnob": {
+      "name": "images/hScrollKnob",
+      "color": {
+        "r": 1, "g": 0, "b": 0, "a": 1
+      }
+    },
+
+    "saveScroll": {
+      "name": "images/hScroll",
+      "color": {
+        "r": 1, "g": 0, "b": 0, "a": 1
+      }
+    },
+  },
+
+  "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
+    "title": {
+      "font": {
+        "file": "fonts/menu.fnt",
+        "scaledSize": 80
+      },
+      "fontColor": {
+        "r": 1,
+        "g": 0,
+        "b": 0,
+        "a": 1
+      }
+    }
+  },
+
+  "com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle": {
+    "save": {
+      "font": {
+        "file": "fonts/menu.fnt",
+        "scaledSize": 20
+      },
+      "fontColorSelected": {
+        "r": 1,
+        "g": 0,
+        "b": 0,
+        "a": 1
+      },
+      "fontColorUnselected": {
+        "r": 1,
+        "g": 0,
+        "b": 0,
+        "a": 1
+      },
+      "selection": "saveListSelection",
+      "background": "saveListBackground",
+    }
+  },
+
+  "com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
+    "save": {
+      "hScroll": "saveScroll",
+      "hScrollKnob": "saveScrollKnob"
+    }
+  },
 }
