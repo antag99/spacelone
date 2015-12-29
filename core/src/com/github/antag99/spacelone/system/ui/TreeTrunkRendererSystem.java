@@ -32,6 +32,9 @@ public final class TreeTrunkRendererSystem extends BaseObjectRendererSystem {
         Position position = mPosition.get(objectEntity);
         Size size = mSize.get(objectEntity);
         batch.setColor(Color.BROWN);
-        batch.draw(trunkTexture, position.x, position.y, size.width, size.height);
+        batch.draw(trunkTexture,
+                position.x - size.width * 0.5f,
+                position.y - size.height * 0.5f,
+                size.width, size.height);
     }
 }

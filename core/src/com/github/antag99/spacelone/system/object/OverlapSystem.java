@@ -124,7 +124,8 @@ public final class OverlapSystem extends EntityProcessorSystem {
                     float bW = bSize.width;
                     float bH = bSize.height;
 
-                    if (aX + aW > bX && aY + aH > bY && bX + bW > aX && bY + bH > aY) {
+                    if (aX + aW * 0.5f > bX && aY + aH * 0.5f > bY &&
+                            bX + bW * 0.5f > aX && bY + bH * 0.5f > aY) {
                         Object[] l = listeners.items;
                         for (int ii = 0, nn = listeners.size; ii < nn; ii++) {
                             ListenerData d = (ListenerData) l[ii];

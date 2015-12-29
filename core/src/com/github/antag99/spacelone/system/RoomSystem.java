@@ -167,21 +167,21 @@ public final class RoomSystem extends EntitySystem {
     private @SkipWire EntitySet tmpEntities = new EntitySet();
     private @SkipWire GridPoint2 key = new GridPoint2();
 
-    public EntitySet getEntities(int roomEntity, float x, float y, float width, float height) {
+    public EntitySet getEntities(int roomEntity, float minX, float minY, float maxX, float maxY) {
         int partitionWidth = spatialSystem.getPartitionWidth();
         int partitionHeight = spatialSystem.getPartitionHeight();
 
         Room room = mRoom.get(roomEntity);
-        int minX = MathUtils.floor(x / partitionWidth);
-        int maxX = MathUtils.ceil((x + width) / partitionWidth);
-        int minY = MathUtils.floor(y / partitionHeight);
-        int maxY = MathUtils.ceil((y + height) / partitionHeight);
+        int minPartitionX = MathUtils.floor(minX / partitionWidth);
+        int minPartitionY = MathUtils.floor(minY / partitionHeight);
+        int maxPartitionX = MathUtils.ceil(maxX / partitionWidth);
+        int maxPartitionY = MathUtils.ceil(maxY / partitionHeight);
 
         tmpEntities.edit().clear();
         EntitySet set = tmpEntities;
 
-        for (int i = minX; i < maxX; i++) {
-            for (int j = minY; j < maxY; j++) {
+        for (int i = minPartitionX; i < maxPartitionX; i++) {
+            for (int j = minPartitionY; j < maxPartitionY; j++) {
                 EntitySet partition = room.partitions.get(key.set(i, j));
                 if (partition == null) {
                     continue;
@@ -192,8 +192,10 @@ public final class RoomSystem extends EntitySystem {
                     Position position = mPosition.get(entity);
                     Size size = mSize.get(entity);
 
-                    if (position.x + size.width > x && position.y + size.height > y &&
-                            x + width > position.x && y + height > position.y) {
+                    if (position.x + size.width * 0.5f > minX &&
+                            position.y + size.height * 0.5f > minY &&
+                            position.x - size.width * 0.5f < maxX &&
+                            position.y - size.height * 0.5f < maxY) {
                         set.edit().addEntity(entity);
                     }
                 }

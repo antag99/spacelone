@@ -33,6 +33,9 @@ public final class PlayerRendererSystem extends BaseObjectRendererSystem {
         Size size = mSize.get(objectEntity);
 
         batch.setColor(Color.FOREST);
-        batch.draw(playerTexture, position.x, position.y, size.width, size.height);
+        batch.draw(playerTexture,
+                position.x - size.width * 0.5f,
+                position.y - size.height * 0.5f,
+                size.width, size.height);
     }
 }

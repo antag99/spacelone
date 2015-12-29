@@ -27,6 +27,9 @@ public final class ItemRendererSystem extends BaseObjectRendererSystem {
         Color color = mColored.get(objectEntity).color;
         ItemTexture itemTexture = mItemTexture.get(objectEntity);
         batch.setColor(color);
-        batch.draw(itemTexture.texture, position.x, position.y, size.width, size.height);
+        batch.draw(itemTexture.texture,
+                position.x - size.width * 0.5f,
+                position.y - size.height * 0.5f,
+                size.width, size.height);
     }
 }

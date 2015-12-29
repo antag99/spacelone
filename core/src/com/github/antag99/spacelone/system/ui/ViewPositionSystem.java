@@ -6,7 +6,6 @@ import com.github.antag99.retinazer.Mapper;
 import com.github.antag99.spacelone.component.Room;
 import com.github.antag99.spacelone.component.object.Location;
 import com.github.antag99.spacelone.component.object.Position;
-import com.github.antag99.spacelone.component.object.Size;
 import com.github.antag99.spacelone.component.ui.View;
 
 public final class ViewPositionSystem extends EntityProcessorSystem {
@@ -14,10 +13,9 @@ public final class ViewPositionSystem extends EntityProcessorSystem {
     private Mapper<Room> mRoom;
     private Mapper<View> mView;
     private Mapper<Position> mPosition;
-    private Mapper<Size> mSize;
 
     public ViewPositionSystem() {
-        super(Family.with(View.class, Position.class, Size.class));
+        super(Family.with(View.class, Position.class));
     }
 
     @Override
@@ -25,10 +23,9 @@ public final class ViewPositionSystem extends EntityProcessorSystem {
         Room room = mRoom.get(mLocation.get(entity).room);
         View view = mView.get(entity);
         Position position = mPosition.get(entity);
-        Size size = mSize.get(entity);
 
-        float x = position.x + size.width * 0.5f;
-        float y = position.y + size.height * 0.5f;
+        float x = position.x;
+        float y = position.y;
 
         float w = view.camera.viewportWidth * view.camera.zoom;
         float h = view.camera.viewportHeight * view.camera.zoom;

@@ -1,26 +1,23 @@
 package com.github.antag99.spacelone.system.object;
 
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Pools;
 import com.github.antag99.retinazer.EntityProcessorSystem;
 import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.Mapper;
-import com.github.antag99.retinazer.SkipWire;
 import com.github.antag99.spacelone.component.object.Collision;
 import com.github.antag99.spacelone.component.object.Location;
 import com.github.antag99.spacelone.component.object.Position;
 import com.github.antag99.spacelone.component.object.Size;
 import com.github.antag99.spacelone.component.object.Velocity;
+import com.github.antag99.spacelone.util.AABB;
 
 public final class CollisionSystem extends EntityProcessorSystem {
     private Mapper<Position> mPosition;
     private Mapper<Size> mSize;
     private Mapper<Collision> mCollision;
     private Mapper<Velocity> mVelocity;
-
-    private @SkipWire Rectangle r = new Rectangle();
 
     public CollisionSystem() {
         super(Family.with(Location.class, Position.class, Size.class, Collision.class));
@@ -40,48 +37,40 @@ public final class CollisionSystem extends EntityProcessorSystem {
         float w = size.width;
         float h = size.height;
 
-        Array<Rectangle> rectangles = collision.rectangles;
-        for (Rectangle rectangle : rectangles) {
-            if (rectangle.overlaps(r.set(x, y, w, h))) {
-
-                if (!rectangle.overlaps(r.set(px, y, w, h))) {
+        Array<AABB> boxes = collision.boxes;
+        for (AABB box : boxes) {
+            if (box.overlaps(x, y, w, h)) {
+                if (!box.overlaps(px, y, w, h)) {
                     if (x < px) {
-                        x = rectangle.x + rectangle.width + MathUtils.FLOAT_ROUNDING_ERROR;
+                        x = box.x + box.w * 0.5f + w * 0.5f + MathUtils.FLOAT_ROUNDING_ERROR;
                     } else if (x > px) {
-                        x = rectangle.x - w - MathUtils.FLOAT_ROUNDING_ERROR;
+                        x = box.x - box.w * 0.5f - w * 0.5f - MathUtils.FLOAT_ROUNDING_ERROR;
                     }
-                    continue;
-                }
-
-                if (!rectangle.overlaps(r.set(x, py, w, h))) {
+                } else if (!box.overlaps(x, py, w, h)) {
                     if (y < py) {
-                        y = rectangle.y + rectangle.height + MathUtils.FLOAT_ROUNDING_ERROR;
+                        y = box.y + box.h * 0.5f + h * 0.5f + MathUtils.FLOAT_ROUNDING_ERROR;
                     } else if (y > py) {
-                        y = rectangle.y - h - MathUtils.FLOAT_ROUNDING_ERROR;
+                        y = box.y - box.h * 0.5f - h * 0.5f - MathUtils.FLOAT_ROUNDING_ERROR;
                     }
-                    continue;
-                }
-
-                if (!rectangle.overlaps(r.set(px, py, w, h))) {
-                    if (y < py) {
-                        y = rectangle.y + rectangle.height + MathUtils.FLOAT_ROUNDING_ERROR;
-                    } else if (y > py) {
-                        y = rectangle.y - h - MathUtils.FLOAT_ROUNDING_ERROR;
-                    }
+                } else if (!box.overlaps(px, py, w, h)) {
                     if (x < px) {
-                        x = rectangle.x - w - MathUtils.FLOAT_ROUNDING_ERROR;
+                        x = box.x + box.w * 0.5f + w * 0.5f + MathUtils.FLOAT_ROUNDING_ERROR;
                     } else if (x > px) {
-                        x = rectangle.x + rectangle.width + MathUtils.FLOAT_ROUNDING_ERROR;
+                        x = box.x - box.w * 0.5f - w * 0.5f - MathUtils.FLOAT_ROUNDING_ERROR;
                     }
-                    continue;
+                    if (y < py) {
+                        y = box.y + box.h * 0.5f + h * 0.5f + MathUtils.FLOAT_ROUNDING_ERROR;
+                    } else if (y > py) {
+                        y = box.y - box.h * 0.5f - h * 0.5f - MathUtils.FLOAT_ROUNDING_ERROR;
+                    }
                 }
             }
         }
 
         boolean stuck = false;
 
-        for (Rectangle rectangle : rectangles) {
-            if (rectangle.overlaps(r.set(x, y, w, h))) {
+        for (AABB box : boxes) {
+            if (box.overlaps(x, y, w, h)) {
                 stuck = true;
                 break;
             }
@@ -102,7 +91,7 @@ public final class CollisionSystem extends EntityProcessorSystem {
             velocity.y = 0f;
         }
 
-        Pools.freeAll(rectangles, true);
-        rectangles.clear();
+        Pools.freeAll(boxes, true);
+        boxes.clear();
     }
 }

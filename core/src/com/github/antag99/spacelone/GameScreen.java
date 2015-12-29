@@ -29,9 +29,8 @@ import com.github.antag99.spacelone.system.RoomGeneratorSystem;
 import com.github.antag99.spacelone.system.RoomSystem;
 import com.github.antag99.spacelone.system.ScriptSystem;
 import com.github.antag99.spacelone.system.WorldSystem;
+import com.github.antag99.spacelone.system.object.ActorBoundsSystem;
 import com.github.antag99.spacelone.system.object.ActorColorSystem;
-import com.github.antag99.spacelone.system.object.ActorPositionSystem;
-import com.github.antag99.spacelone.system.object.ActorSizeSystem;
 import com.github.antag99.spacelone.system.object.CollisionSystem;
 import com.github.antag99.spacelone.system.object.ControlSystem;
 import com.github.antag99.spacelone.system.object.DropSystem;
@@ -140,8 +139,7 @@ public final class GameScreen extends ScreenAdapter {
                 .addSystem(new ClientSystem(this))
                 .addSystem(new FadeSystem())
                 .addSystem(new ActorColorSystem())
-                .addSystem(new ActorPositionSystem())
-                .addSystem(new ActorSizeSystem())
+                .addSystem(new ActorBoundsSystem())
                 .addSystem(new ActorSystem(stage.getRoot())));
         engine.wire(this);
 

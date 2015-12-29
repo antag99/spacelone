@@ -44,7 +44,7 @@ public abstract class BaseObjectRendererSystem extends BaseRendererSystem {
             int startX, int startY, int endX, int endY) {
         EntitySet objects = roomSystem.getEntities(roomEntity,
                 startX - maxObjectWidth, startY - maxObjectHeight,
-                endX - startX + maxObjectWidth * 2, endY - startY + maxObjectHeight * 2);
+                endX + maxObjectWidth, endY + maxObjectHeight);
         tmpMask.set(objects.getMask());
         tmpMask.and(objectFamily.getEntities().getMask());
         objects.edit().clear();

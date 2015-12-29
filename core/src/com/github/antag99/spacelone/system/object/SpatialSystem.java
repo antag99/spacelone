@@ -104,15 +104,15 @@ public final class SpatialSystem extends EntityProcessorSystem {
     }
 
     private int partitionStartX(Position position, Size size) {
-        return MathUtils.floor(position.x / partitionWidth);
+        return MathUtils.floor((position.x - size.width * 0.5f) / partitionWidth);
     }
 
     private int partitionEndX(Position position, Size size) {
-        return MathUtils.ceil((position.x + size.width) / partitionWidth);
+        return MathUtils.ceil((position.x + size.width * 0.5f) / partitionWidth);
     }
 
     private int partitionStartY(Position position, Size size) {
-        return MathUtils.floor(position.y / partitionHeight);
+        return MathUtils.floor((position.y - size.height * 0.5f) / partitionHeight);
     }
 
     private int partitionEndY(Position position, Size size) {

@@ -11,7 +11,6 @@ import com.github.antag99.spacelone.component.object.Harvested;
 import com.github.antag99.spacelone.component.object.Harvestor;
 import com.github.antag99.spacelone.component.object.Location;
 import com.github.antag99.spacelone.component.object.Position;
-import com.github.antag99.spacelone.component.object.Size;
 import com.github.antag99.spacelone.component.type.Harvestable;
 import com.github.antag99.spacelone.system.DeltaSystem;
 import com.github.antag99.spacelone.system.RoomSystem;
@@ -21,7 +20,6 @@ public final class HarvestorSystem extends EntityProcessorSystem {
     private RoomSystem roomSystem;
     private Mapper<Location> mLocation;
     private Mapper<Position> mPosition;
-    private Mapper<Size> mSize;
     private Mapper<Harvestor> mHarvestor;
     private Mapper<Control> mControl;
 
@@ -37,12 +35,8 @@ public final class HarvestorSystem extends EntityProcessorSystem {
         int roomEntity = mLocation.get(entity).room;
         float deltaTime = deltaSystem.getDeltaTime();
         Position position = mPosition.get(entity);
-        Size size = mSize.get(entity);
         Harvestor harvestor = mHarvestor.get(entity);
         Control control = mControl.get(entity);
-
-        float centerX = position.x + size.width * 0.5f;
-        float centerY = position.y + size.height * 0.5f;
 
         float range = 5f; // XXX temporary (shh) hack
 
@@ -51,18 +45,15 @@ public final class HarvestorSystem extends EntityProcessorSystem {
             // to the player, or not objects at all. (Bit hacky, implementation
             // dependent).
             EntitySet objects = roomSystem.getEntities(roomEntity,
-                    centerX - range, centerY - range,
-                    range * 2, range * 2);
+                    position.x - range, position.y - range,
+                    position.x + range, position.y + range);
 
             float closestDistance = range * range + MathUtils.FLOAT_ROUNDING_ERROR;
 
             for (int i = 0, n = objects.size(), items[] = objects.getIndices().items; i < n; i++) {
                 int object = items[i];
                 Position objectPosition = mPosition.get(object);
-                Size objectSize = mSize.get(object);
-                float objectCenterX = objectPosition.x + objectSize.width * 0.5f;
-                float objectCenterY = objectPosition.y + objectSize.height * 0.5f;
-                float distance = Vector2.dst2(centerX, centerY, objectCenterX, objectCenterY);
+                float distance = Vector2.dst2(position.x, position.y, objectPosition.x, objectPosition.y);
 
                 Harvestable harvestable = mHarvestable.get(object);
                 if (harvestable != null && !harvestable.isBeingHarvested) {

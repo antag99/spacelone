@@ -13,14 +13,11 @@ import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.Mapper;
 import com.github.antag99.retinazer.SkipWire;
 import com.github.antag99.spacelone.component.object.Position;
-import com.github.antag99.spacelone.component.object.Size;
 import com.github.antag99.spacelone.component.object.Tree;
 import com.github.antag99.spacelone.system.AssetSystem;
 
 public final class TreeLeavesRendererSystem extends BaseObjectRendererSystem implements Disposable {
     private Mapper<Position> mPosition;
-    private Mapper<Size> mSize;
-
     private AssetSystem assetSystem;
     private @SkipWire TextureRegion leavesTexture, seethroughTexture;
     private @SkipWire FrameBuffer leavesBuffer;
@@ -72,15 +69,12 @@ public final class TreeLeavesRendererSystem extends BaseObjectRendererSystem imp
         super.renderObjects(batch, viewEntity, objects);
 
         Position viewPosition = mPosition.get(viewEntity);
-        Size viewSize = mSize.get(viewEntity);
-        float viewX = viewPosition.x + viewSize.width * 0.5f;
-        float viewY = viewPosition.y + viewSize.height * 0.5f;
 
         batch.flush();
         batch.setBlendFunction(GL20.GL_ONE, GL20.GL_ONE);
         Gdx.gl.glBlendEquation(GL20.GL_FUNC_REVERSE_SUBTRACT);
 
-        batch.draw(seethroughTexture, viewX - 4f, viewY - 4f, 8f, 8f);
+        batch.draw(seethroughTexture, viewPosition.x - 4f, viewPosition.y - 4f, 8f, 8f);
         batch.flush();
 
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -102,7 +96,7 @@ public final class TreeLeavesRendererSystem extends BaseObjectRendererSystem imp
     protected void renderObject(Batch batch, int viewEntity, int objectEntity) {
         Position position = mPosition.get(objectEntity);
         batch.setColor(Color.FOREST);
-        batch.draw(leavesTexture, position.x - 2f, position.y - 2f, 0f, 0f,
+        batch.draw(leavesTexture, position.x - 2.5f, position.y - 2.5f, 0f, 0f,
                 5f, 5f, 1f, 1f, 0f);
     }
 }

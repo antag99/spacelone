@@ -1,14 +1,14 @@
 package com.github.antag99.spacelone.component.object;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
 import com.github.antag99.retinazer.Component;
+import com.github.antag99.spacelone.util.AABB;
 
 public final class Collision implements Component {
 
     /**
-     * List of rectangles the entity is colliding with. The collision resolver
-     * will attempt to undo it's movement until the entity no longer overlaps.
+     * List of close boxes the entity can collide with. The collision resolver
+     * will attempt to ensure the entity do not overlap any of these.
      */
-    public transient Array<Rectangle> rectangles = new Array<>();
+    public transient Array<AABB> boxes = new Array<>();
 }
