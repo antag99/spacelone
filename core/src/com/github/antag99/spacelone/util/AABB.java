@@ -1,6 +1,5 @@
 package com.github.antag99.spacelone.util;
 
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Pool.Poolable;
 
 /**
@@ -34,10 +33,8 @@ public final class AABB implements Poolable {
     }
 
     public boolean overlaps(float x, float y, float w, float h) {
-        return Rectangle.tmp.set(this.x - this.w * 0.5f, this.y - this.h * 0.5f, this.w, this.h)
-                .overlaps(Rectangle.tmp2.set(x - w * 0.5f, y - h * 0.5f, w, h));
-        // return this.x + this.w * 0.5f > x - w * 0.5f && x + w * 0.5f > this.x - this.w * 0.5f &&
-        // this.y + this.h * 0.5f > y - h * 0.5f && y + h * 0.5f > this.y - this.h * 0.5f;
+        return this.x + this.w * 0.5f > x - w * 0.5f && x + w * 0.5f > this.x - this.w * 0.5f &&
+                this.y + this.h * 0.5f > y - h * 0.5f && y + h * 0.5f > this.y - this.h * 0.5f;
     }
 
     public boolean overlaps(AABB other) {
