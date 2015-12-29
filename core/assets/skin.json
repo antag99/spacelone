@@ -36,14 +36,14 @@
     },
 
     "saveScrollKnob": {
-      "name": "images/hScrollKnob",
+      "name": "images/vScrollKnob",
       "color": {
         "r": 1, "g": 0, "b": 0, "a": 1
       }
     },
 
     "saveScroll": {
-      "name": "images/hScroll",
+      "name": "images/vScroll",
       "color": {
         "r": 1, "g": 0, "b": 0, "a": 1
       }
@@ -90,8 +90,8 @@
 
   "com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle": {
     "save": {
-      "hScroll": "saveScroll",
-      "hScrollKnob": "saveScrollKnob"
+      "vScroll": "saveScroll",
+      "vScrollKnob": "saveScrollKnob"
     }
   },
 }

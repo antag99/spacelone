@@ -25,6 +25,7 @@ public final class MenuScreen extends ScreenAdapter {
     private AreaViewport viewport;
     private Array<SaveSlot> saveSlots = new Array<>();
     private List<SaveSlot> saveSlotList;
+    private ScrollPane saveScrollPane;
     private TextButton createButton;
     private TextButton playButton;
     private TextButton deleteButton;
@@ -54,11 +55,14 @@ public final class MenuScreen extends ScreenAdapter {
         table.center().top();
 
         saveSlotList = new List<>(game.skin, "save");
-        ScrollPane saveScrollPane = new ScrollPane(saveSlotList, game.skin, "save");
+        saveScrollPane = new ScrollPane(saveSlotList, game.skin, "save");
         saveScrollPane.setScrollingDisabled(true, false);
+        saveScrollPane.setFadeScrollBars(false);
+        saveScrollPane.setScrollbarsOnTop(true);
+        saveScrollPane.setVariableSizeKnobs(false);
         table.add("SPACELONE", "title");
         table.row();
-        table.add(saveSlotList).expand().fill().pad(0f, 20f, 0f, 20f);
+        table.add(saveScrollPane).expand().fill().pad(0f, 20f, 0f, 20f);
         table.row();
 
         createButton = new TextButton("CREATE NEW WORLD", game.skin, "menu");
@@ -157,6 +161,7 @@ public final class MenuScreen extends ScreenAdapter {
     @Override
     public void show() {
         Gdx.input.setInputProcessor(stage);
+        stage.setScrollFocus(saveScrollPane);
         refreshSaveList();
     }
 
