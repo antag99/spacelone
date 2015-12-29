@@ -144,7 +144,8 @@ public final class MenuScreen extends ScreenAdapter {
         Arrays.sort(worldFiles, new Comparator<FileHandle>() {
             @Override
             public int compare(FileHandle o1, FileHandle o2) {
-                return Long.compare(o2.lastModified(), o1.lastModified());
+                return Long.compare(o2.child("world.json").lastModified(),
+                        o1.child("world.json").lastModified());
             }
         });
         saveSlots.clear();
