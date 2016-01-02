@@ -66,7 +66,7 @@ public final class RoomGeneratorSystem extends EntitySystem {
 
         // XXX *just a test*
         int groundEntity = idSystem.getEntity("ground");
-        int density = 16;
+        int density = 3;
         int treeY = density;
 
         while (treeY < room.height) {
@@ -74,7 +74,7 @@ public final class RoomGeneratorSystem extends EntitySystem {
 
             while (treeX < room.width) {
                 if (room.terrain.get(treeX, treeY) == groundEntity) {
-                    createTree(roomEntity, treeX, treeY);
+                    createTree(roomEntity, treeX + 0.5f, treeY + 0.5f);
                 }
                 treeX += density;
             }
