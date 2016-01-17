@@ -48,6 +48,27 @@
         "r": 1, "g": 0, "b": 0, "a": 1
       }
     },
+
+    "healthBar": {
+      "name": "images/bar_foreground",
+      "color": {
+        "r": 1, "g": 0, "b": 0, "a": 1
+      }
+    },
+
+    "experienceBar": {
+      "name": "images/bar_foreground",
+      "color": {
+        "r": 0, "g": 1, "b": 0, "a": 1
+      }
+    },
+    
+    "hotbarBackground": {
+      "name": "images/background",
+      "color": {
+        "r": 0.2, "g": 0.2, "b": 1, "a": 1
+      }
+    }
   },
 
   "com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle": {
@@ -92,6 +113,23 @@
     "save": {
       "vScroll": "saveScroll",
       "vScrollKnob": "saveScrollKnob"
+    }
+  },
+
+  "com.github.antag99.spacelone.ui.Bar$BarStyle": {
+    "health": {
+      "background": "images/bar_background",
+      "foreground": "healthBar"
+    },
+    "experience": {
+      "background": "images/bar_background",
+      "foreground": "experienceBar"
+    },
+  },
+
+  "com.github.antag99.spacelone.ui.ItemSlot$ItemSlotStyle": {
+    "hotbar": {
+      "background": "hotbarBackground"
     }
   },
 }

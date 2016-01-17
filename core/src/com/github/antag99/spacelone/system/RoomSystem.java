@@ -23,14 +23,14 @@ import com.github.antag99.spacelone.component.object.Position;
 import com.github.antag99.spacelone.component.object.Size;
 import com.github.antag99.spacelone.component.type.Harvestable;
 import com.github.antag99.spacelone.system.object.SpatialSystem;
-import com.github.antag99.spacelone.system.type.ContentSystem;
+import com.github.antag99.spacelone.system.type.PrefabSystem;
 import com.github.antag99.spacelone.util.IntMatrix;
 import com.github.antag99.spacelone.util.UUIDUtils;
 
 public final class RoomSystem extends EntitySystem {
     private Kryo kryo;
     private IdSystem idSystem;
-    private ContentSystem contentSystem;
+    private PrefabSystem contentSystem;
     private WorldSystem worldSystem;
     private SpatialSystem spatialSystem;
     private Mapper<World> mWorld;
@@ -220,7 +220,7 @@ public final class RoomSystem extends EntitySystem {
             throw new IllegalArgumentException("entity does not exist in a room: " + itemEntity);
         mLocation.remove(itemEntity);
         mPosition.remove(itemEntity);
-        mInventoryItem.create(itemEntity).inventory = inventoryEntity;
+        mInventoryItem.create(itemEntity).owner = inventoryEntity;
         mHarvestable.remove(itemEntity);
     }
 }

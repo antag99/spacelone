@@ -1,15 +1,15 @@
 package com.github.antag99.spacelone;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.github.antag99.spacelone.ui.StarBackground;
+import com.github.antag99.spacelone.ui.StarBackgroundWidget;
 import com.github.antag99.spacelone.util.AreaViewport;
 
 public final class PauseScreen extends ScreenAdapter {
@@ -23,7 +23,7 @@ public final class PauseScreen extends ScreenAdapter {
         viewport.setWorldArea(500000f);
         viewport.setPixelsPerUnit(1f);
         stage = new Stage(viewport, game.batch);
-        StarBackground bg = new StarBackground(0L, 50f, 20f, 20f,
+        StarBackgroundWidget bg = new StarBackgroundWidget(0L, 50f, 20f, 20f,
                 game.skin.getRegion("images/star"));
         bg.setFillParent(true);
         stage.addActor(bg);

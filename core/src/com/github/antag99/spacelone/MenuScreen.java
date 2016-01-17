@@ -16,7 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Array;
-import com.github.antag99.spacelone.ui.StarBackground;
+import com.github.antag99.spacelone.ui.StarBackgroundWidget;
 import com.github.antag99.spacelone.util.AreaViewport;
 
 public final class MenuScreen extends ScreenAdapter {
@@ -46,7 +46,7 @@ public final class MenuScreen extends ScreenAdapter {
         viewport.setWorldArea(500000f);
         viewport.setPixelsPerUnit(1f);
         stage = new Stage(viewport, game.batch);
-        StarBackground bg = new StarBackground(0L, 50f, 20f, 20f,
+        StarBackgroundWidget bg = new StarBackgroundWidget(0L, 50f, 20f, 20f,
                 game.skin.getRegion("images/star"));
         bg.setFillParent(true);
         stage.addActor(bg);

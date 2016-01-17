@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.FrameBuffer;
 import com.badlogic.gdx.math.EarClippingTriangulator;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.IntArray;
+import com.github.antag99.retinazer.EntitySet;
 import com.github.antag99.retinazer.Family;
 import com.github.antag99.retinazer.Mapper;
 import com.github.antag99.retinazer.SkipWire;
@@ -65,7 +65,7 @@ public final class TreeLeavesRendererSystem extends BaseObjectRendererSystem imp
         }
     }
 
-    private void renderLeaves(Batch batch, int viewEntity, IntArray objects) {
+    private void renderLeaves(Batch batch, int viewEntity, EntitySet objects) {
         batch.begin();
         renderLeaves = false;
         super.renderObjects(batch, viewEntity, objects);
@@ -75,7 +75,7 @@ public final class TreeLeavesRendererSystem extends BaseObjectRendererSystem imp
     }
 
     @Override
-    protected void renderObjects(Batch batch, int viewEntity, IntArray objects) {
+    protected void renderObjects(Batch batch, int viewEntity, EntitySet objects) {
         batch.end();
 
         prepareFrameBuffers();

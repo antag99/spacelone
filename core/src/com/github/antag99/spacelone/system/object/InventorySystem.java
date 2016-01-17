@@ -19,7 +19,7 @@ public final class InventorySystem extends EntitySystem {
             protected void removed(int entity) {
                 EntitySet items = mInventory.get(entity).items;
                 for (int i = 0, n = items.size(), v[] = items.getIndices().items; i < n; i++) {
-                    mInventoryItem.get(v[i]).inventory = -1;
+                    mInventoryItem.get(v[i]).owner = -1;
                     engine.destroyEntity(v[i]);
                 }
             }
@@ -28,7 +28,7 @@ public final class InventorySystem extends EntitySystem {
         engine.getFamily(Family.with(InventoryItem.class)).addListener(new EntityAdapter() {
             @Override
             protected void inserted(int entity) {
-                int inventoryEntity = mInventoryItem.get(entity).inventory;
+                int inventoryEntity = mInventoryItem.get(entity).owner;
                 if (inventoryEntity == -1)
                     throw new RuntimeException("Cannot add an inventory item without an inventory");
                 mInventory.get(inventoryEntity).items.edit().addEntity(entity);
@@ -36,7 +36,7 @@ public final class InventorySystem extends EntitySystem {
 
             @Override
             protected void removed(int entity) {
-                int inventoryEntity = mInventoryItem.get(entity).inventory;
+                int inventoryEntity = mInventoryItem.get(entity).owner;
                 if (inventoryEntity != -1)
                     mInventory.get(inventoryEntity).items.edit().removeEntity(entity);
             }

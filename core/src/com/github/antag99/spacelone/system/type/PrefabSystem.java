@@ -22,7 +22,6 @@ import com.github.antag99.spacelone.component.Name;
 import com.github.antag99.spacelone.component.Solid;
 import com.github.antag99.spacelone.component.object.Colored;
 import com.github.antag99.spacelone.component.object.Item;
-import com.github.antag99.spacelone.component.object.ItemAmount;
 import com.github.antag99.spacelone.component.object.Position;
 import com.github.antag99.spacelone.component.object.RoomObject;
 import com.github.antag99.spacelone.component.object.Size;
@@ -40,7 +39,7 @@ import com.github.antag99.spacelone.system.IdSystem;
 import com.github.antag99.spacelone.system.RoomSystem;
 import com.github.antag99.spacelone.util.SkipProperty;
 
-public final class ContentSystem extends EntitySystem {
+public final class PrefabSystem extends EntitySystem {
     private Engine engine;
 
     private RoomSystem roomSystem;
@@ -57,7 +56,6 @@ public final class ContentSystem extends EntitySystem {
     private Mapper<TerrainType> mTerrainType;
 
     private Mapper<Item> mItem;
-    private Mapper<ItemAmount> mItemAmount;
 
     private Mapper<Name> mName;
 
@@ -191,7 +189,6 @@ public final class ContentSystem extends EntitySystem {
         mId.create(entity).id = "log";
         mName.create(entity).name = "Log";
         mSize.create(entity).set(1f, 1f);
-        mItemAmount.create(entity);
         mItemTextureRef.create(entity).name = "images/log";
         mColored.create(entity).color(Color.BROWN);
     }

@@ -15,7 +15,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.github.antag99.retinazer.EntitySystem;
 import com.github.antag99.retinazer.Mapper;
 import com.github.antag99.spacelone.component.Room;
-import com.github.antag99.spacelone.system.type.ContentSystem;
+import com.github.antag99.spacelone.system.type.PrefabSystem;
 import com.github.antag99.spacelone.util.IntMatrix;
 import com.sudoplay.joise.module.Module;
 import com.sudoplay.joise.module.ModuleCombiner.CombinerType;
@@ -23,7 +23,7 @@ import com.sudoplay.joise.module.ModuleCombiner.CombinerType;
 public final class RoomGeneratorSystem extends EntitySystem {
     private RoomSystem roomSystem;
     private IdSystem idSystem;
-    private ContentSystem contentSystem;
+    private PrefabSystem contentSystem;
     private Mapper<Room> mRoom;
 
     private static final int ROOM_SIZE = 1024;

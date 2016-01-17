@@ -10,7 +10,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.esotericsoftware.kryo.Kryo;
@@ -20,7 +19,6 @@ import com.esotericsoftware.kryo.io.Output;
 import com.github.antag99.retinazer.Engine;
 import com.github.antag99.retinazer.EngineConfig;
 import com.github.antag99.retinazer.EntitySystem;
-import com.github.antag99.spacelone.system.ActorSystem;
 import com.github.antag99.spacelone.system.AssetSystem;
 import com.github.antag99.spacelone.system.ClientSystem;
 import com.github.antag99.spacelone.system.DeltaSystem;
@@ -29,8 +27,6 @@ import com.github.antag99.spacelone.system.RoomGeneratorSystem;
 import com.github.antag99.spacelone.system.RoomSystem;
 import com.github.antag99.spacelone.system.ScriptSystem;
 import com.github.antag99.spacelone.system.WorldSystem;
-import com.github.antag99.spacelone.system.object.ActorBoundsSystem;
-import com.github.antag99.spacelone.system.object.ActorColorSystem;
 import com.github.antag99.spacelone.system.object.CollisionSystem;
 import com.github.antag99.spacelone.system.object.ControlSystem;
 import com.github.antag99.spacelone.system.object.DropSystem;
@@ -47,14 +43,16 @@ import com.github.antag99.spacelone.system.object.PlayerSystem;
 import com.github.antag99.spacelone.system.object.ResourceSystem;
 import com.github.antag99.spacelone.system.object.SpatialSystem;
 import com.github.antag99.spacelone.system.object.VelocitySystem;
-import com.github.antag99.spacelone.system.type.ContentSystem;
+import com.github.antag99.spacelone.system.type.PrefabSystem;
 import com.github.antag99.spacelone.system.type.FloorTextureRefSystem;
 import com.github.antag99.spacelone.system.type.ItemTextureRefSystem;
 import com.github.antag99.spacelone.system.type.ObjectTextureRefSystem;
 import com.github.antag99.spacelone.system.ui.FloorRendererSystem;
+import com.github.antag99.spacelone.system.ui.GameHUDSystem;
 import com.github.antag99.spacelone.system.ui.GroundRendererSystem;
 import com.github.antag99.spacelone.system.ui.ItemRendererSystem;
 import com.github.antag99.spacelone.system.ui.PlayerRendererSystem;
+import com.github.antag99.spacelone.system.ui.StarBackgroundSystem;
 import com.github.antag99.spacelone.system.ui.TreeLeavesRendererSystem;
 import com.github.antag99.spacelone.system.ui.TreeTrunkRendererSystem;
 import com.github.antag99.spacelone.system.ui.ViewPositionSystem;
@@ -70,12 +68,11 @@ public final class GameScreen extends ScreenAdapter {
     private Spacelone game;
     private Engine engine;
     private Kryo kryo;
-    private Stage stage;
     private AreaViewport viewport;
     private OrthographicCamera camera;
-    private InputMultiplexer inputMultiplexer;
     private int world;
 
+    public InputMultiplexer inputMultiplexer;
     public FileHandle directory;
 
     public GameScreen(Spacelone game) {
@@ -85,7 +82,6 @@ public final class GameScreen extends ScreenAdapter {
         viewport = new AreaViewport(camera);
         viewport.setPixelsPerUnit(16f);
         viewport.setWorldArea(50000f);
-        stage = new Stage(viewport, game.batch);
 
         kryo = new Kryo();
         kryo.register(UUID.class, new Serializer<UUID>() {
@@ -107,7 +103,7 @@ public final class GameScreen extends ScreenAdapter {
                 .addSystem(new AssetSystem(game.skin))
                 .addSystem(new ScriptSystem())
                 .addSystem(new IdSystem())
-                .addSystem(new ContentSystem())
+                .addSystem(new PrefabSystem())
                 .addSystem(new ItemTextureRefSystem(game.skin.getAtlas()))
                 .addSystem(new FloorTextureRefSystem(game.skin.getAtlas()))
                 .addSystem(new ObjectTextureRefSystem(game.skin.getAtlas()))
@@ -130,21 +126,20 @@ public final class GameScreen extends ScreenAdapter {
                 .addSystem(new CollisionSystem())
                 .addSystem(new OverlapSystem())
                 .addSystem(new ViewPositionSystem())
+                .addSystem(new StarBackgroundSystem())
                 .addSystem(new GroundRendererSystem())
                 .addSystem(new FloorRendererSystem())
                 .addSystem(new TreeTrunkRendererSystem())
                 .addSystem(new ItemRendererSystem())
                 .addSystem(new PlayerRendererSystem())
                 .addSystem(new TreeLeavesRendererSystem())
+                .addSystem(new GameHUDSystem(this))
                 .addSystem(new ClientSystem(this))
-                .addSystem(new FadeSystem())
-                .addSystem(new ActorColorSystem())
-                .addSystem(new ActorBoundsSystem())
-                .addSystem(new ActorSystem(stage.getRoot())));
+                .addSystem(new FadeSystem()));
         engine.wire(this);
 
         inputMultiplexer = new InputMultiplexer();
-        inputMultiplexer.addProcessor(stage);
+        inputMultiplexer.addProcessor(engine.getSystem(GameHUDSystem.class));
     }
 
     @Override
@@ -183,18 +178,11 @@ public final class GameScreen extends ScreenAdapter {
 
     @Override
     public void render(float deltaTime) {
-        if (Gdx.input.isKeyPressed(Keys.TAB)) {
-            deltaTime *= 50f;
-        }
-
         Gdx.gl.glClearColor(0f, 0f, 0f, 0f);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         engine.getSystem(DeltaSystem.class).setDeltaTime(deltaTime);
         engine.update();
-
-        stage.act(deltaTime);
-        stage.draw();
 
         if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
             game.setScreen(game.pauseScreen);

@@ -8,11 +8,13 @@ import com.github.antag99.spacelone.GameScreen;
 import com.github.antag99.spacelone.component.World;
 import com.github.antag99.spacelone.component.ui.Renderer;
 import com.github.antag99.spacelone.component.ui.View;
+import com.github.antag99.spacelone.system.ui.GameHUDSystem;
 
 public final class ClientSystem extends EntitySystem {
     private @SkipWire GameScreen gameScreen;
 
     private WorldSystem worldSystem;
+    private GameHUDSystem gameHUDSystem;
     private Mapper<World> mWorld;
     private Mapper<View> mView;
     private Mapper<Renderer> mRenderer;
@@ -27,6 +29,7 @@ public final class ClientSystem extends EntitySystem {
         int player = mWorld.get(world).localPlayer;
         mView.create(player).camera = gameScreen.getCamera();
         mRenderer.create(player).batch = gameScreen.getBatch();
+        gameHUDSystem.setPlayer(player);
         return world;
     }
 

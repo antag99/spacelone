@@ -10,12 +10,12 @@ import com.github.antag99.spacelone.component.object.Position;
 import com.github.antag99.spacelone.component.type.Drop;
 import com.github.antag99.spacelone.system.IdSystem;
 import com.github.antag99.spacelone.system.RoomSystem;
-import com.github.antag99.spacelone.system.type.ContentSystem;
+import com.github.antag99.spacelone.system.type.PrefabSystem;
 import com.github.antag99.spacelone.util.EntityAdapter;
 
 public final class DropSystem extends EntitySystem {
     private IdSystem idSystem;
-    private ContentSystem contentSystem;
+    private PrefabSystem contentSystem;
     private RoomSystem roomSystem;
     private Mapper<Location> mLocation;
     private Mapper<Position> mPosition;
